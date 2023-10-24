@@ -10,6 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.domains.contracts.repositories.ActorRepository;
 import com.example.domains.entities.Actor;
+import com.example.domains.entities.dtos.ActorDTO;
+import com.example.domains.entities.dtos.ActorShort;
 
 @SpringBootApplication
 public class DemoApplication implements CommandLineRunner {
@@ -49,14 +51,24 @@ public class DemoApplication implements CommandLineRunner {
 //		dao.findAll((root, query, builder) -> builder.greaterThanOrEqualTo(root.get("actorId"), 200))
 //			.forEach(System.out::println);
 //		dao.findAll(PageRequest.of(0, 10, Sort.by("firstName", "lastName"))).forEach(System.out::println);
-		var item = dao.findById(1);
-		if(item.isPresent()) {
-			var a = item.get();
-			System.out.println(a);
-//			a.getFilmActors().forEach(e -> System.out.println(e.getFilm().getTitle()));
-		} else {
-			System.out.println("No encontrado");
-		}
+//		var item = dao.findById(1);
+//		if(item.isPresent()) {
+//			var a = item.get();
+//			System.out.println(a);
+////			a.getFilmActors().forEach(e -> System.out.println(e.getFilm().getTitle()));
+//		} else {
+//			System.out.println("No encontrado");
+//		}
+//		var a = new Actor(0, null, "4G");
+//		if(a.isInvalid())
+//			System.err.println(a.getErrorsMessage());
+//		else
+//			dao.save(a);
+//		dao.findByActorIdGreaterThanEqual(200).forEach(e->System.out.println(ActorDTO.from(e)));
+//		dao.readByActorIdGreaterThanEqual(200).forEach(System.out::println);
+//		dao.queryByActorIdGreaterThanEqual(200).forEach(e->System.out.println(e.getId() + " - " + e.getNombre()));
+//		dao.findAllBy(ActorDTO.class).forEach(System.out::println);
+		dao.findAllBy(ActorShort.class).forEach(e->System.out.println(e.getId() + " - " + e.getNombre()));
 	}
 	
 	@Transactional
