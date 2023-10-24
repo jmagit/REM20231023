@@ -6,6 +6,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.domains.contracts.repositories.ActorRepository;
 import com.example.domains.entities.Actor;
@@ -18,6 +19,7 @@ public class DemoApplication implements CommandLineRunner {
 	}
 
 	@Override
+	@Transactional
 	public void run(String... args) throws Exception {
 		System.out.println("Aplicación arracada ...");
 		demosDatos();
@@ -46,7 +48,20 @@ public class DemoApplication implements CommandLineRunner {
 //		dao.findNovedadesBySQL(200).forEach(System.out::println);
 //		dao.findAll((root, query, builder) -> builder.greaterThanOrEqualTo(root.get("actorId"), 200))
 //			.forEach(System.out::println);
-		dao.findAll(PageRequest.of(0, 10, Sort.by("firstName", "lastName"))).forEach(System.out::println);
+//		dao.findAll(PageRequest.of(0, 10, Sort.by("firstName", "lastName"))).forEach(System.out::println);
+		var item = dao.findById(1);
+		if(item.isPresent()) {
+			var a = item.get();
+			System.out.println(a);
+//			a.getFilmActors().forEach(e -> System.out.println(e.getFilm().getTitle()));
+		} else {
+			System.out.println("No encontrado");
+		}
+	}
+	
+	@Transactional
+	void transaccion() {
+		
 	}
 
 }
