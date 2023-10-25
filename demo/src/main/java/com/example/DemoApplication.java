@@ -29,7 +29,7 @@ public class DemoApplication implements CommandLineRunner {
 	@Transactional
 	public void run(String... args) throws Exception {
 		System.out.println("Aplicación arracada ...");
-		demosDatos();
+//		demosDatos();
 	}
 	
 	@Autowired

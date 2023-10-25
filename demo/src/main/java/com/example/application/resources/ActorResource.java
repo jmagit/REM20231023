@@ -3,6 +3,8 @@ import java.net.URI;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,7 +19,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.example.domains.contracts.services.ActorService;
+import com.example.domains.entities.Film;
+import com.example.domains.entities.FilmActor;
 import com.example.domains.entities.dtos.ActorDTO;
+import com.example.domains.entities.dtos.ActorShort;
 import com.example.exceptions.BadRequestException;
 import com.example.exceptions.DuplicateKeyException;
 import com.example.exceptions.InvalidDataException;
@@ -32,8 +37,13 @@ public class ActorResource {
 	private ActorService srv;
 
 	@GetMapping
-	public List<ActorDTO> getAll() {
-		return srv.getByProjection(ActorDTO.class);
+	public List<ActorShort> getAll() {
+		return srv.getByProjection(ActorShort.class);
+	}
+
+	@GetMapping(params = "page")
+	public Page<ActorDTO> getAll(Pageable page) {
+		return srv.getByProjection(page, ActorDTO.class);
 	}
 
 	@GetMapping(path = "/{id}")
@@ -44,6 +54,28 @@ public class ActorResource {
 		return ActorDTO.from(item.get());
 	}
 	
+	record Peli(int id, String titulo) {}
+	
+	@GetMapping(path = "/{id}/pelis")
+	public List<Peli> getPelis(@PathVariable int id) throws NotFoundException {
+		var item = srv.getOne(id);
+		if(item.isEmpty())
+			throw new NotFoundException();
+		return item.get().getFilmActors().stream()
+				.map(f->new Peli(f.getFilm().getFilmId(), f.getFilm().getTitle()))
+				.toList();
+	}
+
+	
+	@PutMapping(path = "/{id}/jubilacion")
+	@ResponseStatus(HttpStatus.ACCEPTED)
+	public void jubilate(@PathVariable int id) throws NotFoundException {
+		var item = srv.getOne(id);
+		if(item.isEmpty())
+			throw new NotFoundException();
+		item.get().jubilate();
+	}
+
 	@PostMapping
 	public ResponseEntity<Object> create(@Valid @RequestBody ActorDTO item) throws DuplicateKeyException, InvalidDataException {
 		var newItem = srv.add(ActorDTO.from(item));
