@@ -4,14 +4,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.dao.support.DaoSupport;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.domains.contracts.repositories.ActorRepository;
+import com.example.domains.contracts.services.ActorService;
 import com.example.domains.entities.Actor;
 import com.example.domains.entities.dtos.ActorDTO;
 import com.example.domains.entities.dtos.ActorShort;
+import com.example.exceptions.DuplicateKeyException;
+import com.example.exceptions.InvalidDataException;
+import com.example.exceptions.NotFoundException;
 
 @SpringBootApplication
 public class DemoApplication implements CommandLineRunner {
@@ -28,7 +33,8 @@ public class DemoApplication implements CommandLineRunner {
 	}
 	
 	@Autowired
-	ActorRepository dao;
+//	ActorRepository dao;
+	ActorService srv;
 	
 	private void demosDatos() {
 //		var a = new Actor(0, "Pepito", "Grillo");
@@ -68,7 +74,21 @@ public class DemoApplication implements CommandLineRunner {
 //		dao.readByActorIdGreaterThanEqual(200).forEach(System.out::println);
 //		dao.queryByActorIdGreaterThanEqual(200).forEach(e->System.out.println(e.getId() + " - " + e.getNombre()));
 //		dao.findAllBy(ActorDTO.class).forEach(System.out::println);
-		dao.findAllBy(ActorShort.class).forEach(e->System.out.println(e.getId() + " - " + e.getNombre()));
+//		dao.findAllBy(ActorShort.class).forEach(e->System.out.println(e.getId() + " - " + e.getNombre()));
+		srv.getByProjection(ActorShort.class).forEach(e->System.out.println(e.getId() + " - " + e.getNombre()));
+		try {
+			srv.modify(new Actor(9990, "KK", "4G"));
+			srv.add(new Actor(0, null, "4G"));
+		} catch (DuplicateKeyException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (InvalidDataException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (NotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 	}
 	
 	@Transactional
