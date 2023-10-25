@@ -1,0 +1,17 @@
+# Normal
+# empaquetar: mvnw clean package
+#FROM openjdk:17-alpine
+#COPY target/catalogo-0.0.1-SNAPSHOT.jar /usr/app.jar
+#EXPOSE 8080
+#ENTRYPOINT ["java","-jar","/usr/app.jar"]
+
+# Nativa
+# generar: mvnw clean spring-boot:build-image
+FROM catalogo:0.0.1-SNAPSHOT
+EXPOSE 8080
+
+# crear imagen: docker build -t ms-catalogo .
+# crear contenedor (defecto): docker run -d --name ms-catalogo -p 8010:8080 --env DB_SERVER=mysql-sakila:3306 --env DISCOVERY_URL=http://ms-eureka-server:8761 --env CONFIGSRV_URL=http://ms-config-server:8888/ --env ADMINSRV_URL=http://host.docker.internal:8081 --env ZIPKINSRV_URL=http://zipkin:9411 --network microservicios ms-catalogo
+# crear contenedor 2: docker run -d --rm --name ms-catalogo-2 -p 8011:8080 --env DB_SERVER=mysql-sakila:3306 --env DISCOVERY_URL=http://ms-eureka-server:8761 --env CONFIGSRV_URL=http://ms-config-server:8888/ --env ADMINSRV_URL=http://host.docker.internal:8081 --env ZIPKINSRV_URL=http://zipkin:9411 --network microservicios ms-catalogo
+# crear contenedor 3: docker run -d --rm --name ms-catalogo-3 -p 8012:8080 --env DB_SERVER=mysql-sakila:3306 --env DISCOVERY_URL=http://ms-eureka-server:8761 --env CONFIGSRV_URL=http://ms-config-server:8888/ --env ADMINSRV_URL=http://host.docker.internal:8081 --env ZIPKINSRV_URL=http://zipkin:9411 --network microservicios ms-catalogo
+# añadir a red: docker network connect microservicios ms-catalogo
