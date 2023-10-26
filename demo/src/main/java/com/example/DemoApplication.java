@@ -1,13 +1,17 @@
 package com.example;
 
-import java.util.TreeMap;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 import com.example.domains.contracts.services.ActorService;
 import com.example.domains.entities.Actor;
@@ -22,6 +26,8 @@ import io.swagger.v3.oas.annotations.info.Contact;
 import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.info.License;
 
+@EnableDiscoveryClient
+@EnableFeignClients("com.example.application.proxies")
 @OpenAPIDefinition(
         info = @Info(title = "Microservicio: Demos",  version = "1.0",
                 description = "**Demos** de Microservicios.",
@@ -44,6 +50,17 @@ public class DemoApplication implements CommandLineRunner {
 //		demosDatos();
 	}
 	
+	@Bean 
+	@Primary
+	public RestTemplate restTemplate(RestTemplateBuilder builder) {
+		return builder.build();
+	}
+	@Bean 
+	@LoadBalanced
+	public RestTemplate restTemplateLB(RestTemplateBuilder builder) {
+		return builder.build();
+	}
+
 //	@Bean
 //	public OpenApiCustomiser sortSchemasAlphabetically() {
 //	    return openApi -> {
