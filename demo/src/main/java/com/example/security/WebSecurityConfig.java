@@ -40,7 +40,7 @@ public class WebSecurityConfig {
                 .addFilterAfter(new JWTAuthorizationFilter(SECRET), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(requests -> requests
                     .requestMatchers("/error").permitAll()
-                    .requestMatchers("/api/cotilla/balancea/rt").hasRole("ADMINISTRADORES")
+                    .requestMatchers("/cotilla/balancea/rt").hasRole("ADMINISTRADORES")
                     .anyRequest().permitAll()
                  )
                 .build();
