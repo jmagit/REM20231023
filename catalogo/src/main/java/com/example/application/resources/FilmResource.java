@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.example.DomainEventService;
 import com.example.application.proxies.MeGustaProxy;
 import com.example.domains.contracts.services.FilmService;
 import com.example.domains.entities.Category;
@@ -57,6 +58,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 public class FilmResource {
 	@Autowired
 	private FilmService srv;
+	@Autowired
+	DomainEventService deSrv;
 
 	@Hidden
 	@GetMapping(params = "page")
@@ -188,6 +191,7 @@ public class FilmResource {
 		Film newItem = srv.add(FilmEditDTO.from(item));
 		URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(newItem.getFilmId())
 				.toUri();
+		deSrv.sendAdd(Film.class.getSimpleName(), newItem.getFilmId());
 		return ResponseEntity.created(location).build();
 	}
 
@@ -201,6 +205,7 @@ public class FilmResource {
 			@Valid @RequestBody FilmEditDTO item) throws Exception {
 		if (item.getFilmId() != id)
 			throw new BadRequestException("No coinciden los identificadores");
+		deSrv.sendModify(Film.class.getSimpleName(), id);
 		return FilmEditDTO.from(srv.modify(FilmEditDTO.from(item)));
 	}
 
@@ -212,6 +217,7 @@ public class FilmResource {
 	public void delete(@Parameter(description = "Identificador de la pelicula", required = true) @PathVariable int id)
 			throws Exception {
 		srv.deleteById(id);
+		deSrv.sendDelete(Film.class.getSimpleName(), id);
 	}
 	
 	@Autowired
